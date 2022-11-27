@@ -11,6 +11,7 @@
         <guava.version>31.1-jre</guava.version>
         <java.version>17</java.version>
         <lombok.version>1.18.24</lombok.version>
+        <snakeyaml.version>1.33</snakeyaml.version>
         <spring-boot.version>2.7.6</spring-boot.version>
     </properties>
 
@@ -43,6 +44,11 @@
             <artifactId>spring-boot-starter-web</artifactId>
             <version>${spring-boot.version}</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>${snakeyaml.version}</version>
         </dependency>
 
         <dependency>
