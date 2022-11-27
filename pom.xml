@@ -11,10 +11,7 @@
         <guava.version>31.1-jre</guava.version>
         <java.version>17</java.version>
         <lombok.version>1.18.24</lombok.version>
-        <postgresql.version>42.5.0</postgresql.version>
-        <springdoc-openapi-ui.version>1.6.12</springdoc-openapi-ui.version>
-        <keycloak-spring-boot-starter.version>20.0.1</keycloak-spring-boot-starter.version>
-        <spring-boot.version>2.7.5</spring-boot.version>
+        <spring-boot.version>2.7.6</spring-boot.version>
     </properties>
 
     <dependencies>
