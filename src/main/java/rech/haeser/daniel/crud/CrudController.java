@@ -4,7 +4,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import rech.haeser.daniel.crud.exception.DataIntegrityException;
 
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 
@@ -44,12 +46,36 @@ public abstract class CrudController<D, E extends BaseEntity<B, I>, B, I> {
     }
 
     @GetMapping
-    public final ResponseEntity<CollectionResponse<D>> getList(@RequestParam final Map<String, String> queryParams) {
+    public final ResponseEntity<CollectionResponse<D>> query(
+            @RequestParam final Optional<Integer> pageIndex,
+            @RequestParam final Optional<Integer> pageSize,
+            @RequestParam final Map<String, String> queryParams
+    ) {
+        final var filterParams = new HashMap<>(queryParams);
+        filterParams.keySet()
+                .removeAll(ReservedQueryParam.getAllParamNames());
+
+        if (anyUnsupportedParam(filterParams)) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        final var list = getCrudService().query(
+                filterParams,
+                pageIndex,
+                pageSize,
+                rolesFor(Permission.QUERY)
+        );
         final var collectionResponse = CollectionResponse.<D>builder()
-                .results(getCrudService().getList(queryParams, getSupportedFilterParams(), rolesFor(Permission.QUERY)))
+                .results(list)
                 .build();
         return ResponseEntity.ok()
                 .body(collectionResponse);
+    }
+
+    private boolean anyUnsupportedParam(final Map<String, String> filterParams) {
+        return filterParams.keySet()
+                .stream()
+                .anyMatch(paramName -> !getSupportedFilterParams().contains(paramName));
     }
 
     protected abstract CrudService<D, E, B, I> getCrudService();

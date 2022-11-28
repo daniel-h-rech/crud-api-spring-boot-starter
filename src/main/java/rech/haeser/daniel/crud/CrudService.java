@@ -66,16 +66,14 @@ public abstract class CrudService<D, E extends BaseEntity<B, I>, B, I> {
 
     @Transactional(readOnly = true)
     @PreAuthorize("hasAnyAuthority(#allowedRoles)")
-    public final List<D> getList(
-            final Map<String, String> queryParams,
-            final Set<String> supportedFilterParams,
+    public final List<D> query(
+            final Map<String, String> filterParams,
+            final Optional<Integer> pageIndex,
+            final Optional<Integer> pageSize,
             final Set<String> allowedRoles
     ) {
-        final var filterHelper = new FilterHelper(
-                supportedFilterParams,
-                queryParams
-        );
-        final var specification = new FilterSpecification<E>(filterHelper.getFilterMap());
+        final var filterHelper = new FilterHelper(filterParams, pageIndex, pageSize);
+        final var specification = new FilterSpecification<E>(filterParams);
         return filterHelper.getPageable()
                 .map(pageable -> getJpaCriteriaRepository().findAll(specification, pageable).stream())
                 .orElseGet(getJpaCriteriaRepository().findAll(specification, filterHelper.getSort())::stream)
